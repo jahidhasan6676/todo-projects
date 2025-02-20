@@ -1,10 +1,12 @@
 import React from 'react';
-import TaskAdd from '../taskAdd/TaskAdd';
+import TaskAdd from '../task/TaskAdd';
+import AllTaskShow from '../task/AllTaskShow';
 
 const Home = () => {
     return (
         <div>
             <TaskAdd></TaskAdd>
+            <AllTaskShow></AllTaskShow>
         </div>
     );
 };

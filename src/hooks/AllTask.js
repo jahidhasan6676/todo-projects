@@ -11,6 +11,7 @@ const AllTask = () => {
         queryKey: ["tasks", user?.email],
         queryFn: async () => {
             const data = await axiosPublic.get(`/tasks/${user?.email}`)
+            console.log(data.data)
             return data.data;
         },
 

@@ -8,7 +8,7 @@ const TaskAdd = () => {
     const { user } = useContext(AuthContext);
     const axiosPublic = useAxiosPublic();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [,,,refetch] = AllTask();
+    const [, , , refetch] = AllTask();
 
     const handleTaskAdd = async (e) => {
         e.preventDefault();
@@ -33,7 +33,7 @@ const TaskAdd = () => {
             if (res.data.insertedId) {
                 refetch();
                 toast.success("Task Successfully Added");
-                setIsModalOpen(false); 
+                setIsModalOpen(false);
             }
         } catch (err) {
             toast.error(err.message);
@@ -42,10 +42,10 @@ const TaskAdd = () => {
 
     return (
         <div className="w-11/12 mx-auto flex flex-col items-center mt-10">
+            
             <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-blue-600 text-white py-3 px-6 rounded-full"
-            >
+                className="bg-green-500 text-white py-2 px-4 border rounded-md">
                 Add Task
             </button>
 
@@ -59,12 +59,14 @@ const TaskAdd = () => {
                                 type="text"
                                 name="title"
                                 placeholder="Task Title"
+                                maxLength={50}
                                 className="w-full p-2 border rounded mb-2"
                                 required
                             />
                             <textarea
                                 name="description"
                                 placeholder="Task Description"
+                                maxLength={200}
                                 className="w-full p-2 border rounded mb-2"
                             />
                             <select className="w-full p-2 border rounded mb-2" name="category">

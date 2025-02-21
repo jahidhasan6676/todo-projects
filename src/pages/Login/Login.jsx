@@ -23,7 +23,7 @@ const Login = () => {
         };
 
         
-        await axiosPublic.post(`/user/${user?.email}`, userData);
+        await axiosPublic.post(`/user/${loggedInUser?.email}`, userData);
       }
 
       navigate("/");

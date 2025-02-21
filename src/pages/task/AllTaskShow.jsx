@@ -15,8 +15,6 @@ const AllTaskShow = () => {
     const [tasks, isLoading, error, refetch] = AllTask();
     const categories = ["To-Do", "In Progress", "Done"];
 
-    
-
     const handleOpenModal = (task) => {
         setSelectedTask(task);
         setIsModalOpen(true);
@@ -55,7 +53,12 @@ const AllTaskShow = () => {
         }
     };
 
-    if (isLoading) return <p className="text-center text-gray-500">Loading tasks...</p>;
+    if (isLoading) 
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <span className="loading loading-spinner loading-lg"></span>
+            </div>
+        );
     if (error) return <p className="text-center text-red-500">Error fetching tasks</p>;
 
     const handleDeleteProduct = (id) => {
@@ -136,9 +139,9 @@ const AllTaskShow = () => {
                                 <div
                                     {...provided.droppableProps}
                                     ref={provided.innerRef}
-                                    className="border rounded-lg shadow-md bg-gray-100 p-4"
+                                    className="rounded-lg bg-gray-100 p-4"
                                 >
-                                    <h3 className="text-xl font-bold mb-2">{category}</h3>
+                                    <h3 className="text-xl font-bold mb-5 text-center">{category}</h3>
                                     <div className="grid grid-cols-1 gap-4">
                                         {groupedTasks[category].length > 0 ? (
                                             groupedTasks[category].map((task, index) => (
@@ -148,16 +151,16 @@ const AllTaskShow = () => {
                                                             ref={provided.innerRef}
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
-                                                            className="p-4 border rounded-lg shadow-sm bg-white"
+                                                            className="p-4 rounded-lg bg-white border"
                                                         >
                                                             <h4 className="text-lg font-semibold">{task.title}</h4>
                                                             <p className="text-gray-600">{task.description}</p>
                                                             <p className="text-sm text-gray-500">Date: {task.date}</p>
                                                             <div className="text-end">
-                                                                <button onClick={() => handleOpenModal(task)} className="text-blue-500 hover:text-blue-700 mr-2">
+                                                                <button onClick={() => handleOpenModal(task)} className="text-green-500 hover:text-blue-600 mr-2">
                                                                     <FiEdit size={20} />
                                                                 </button>
-                                                                <button onClick={() => handleDeleteProduct(task._id)} className="text-red-500 hover:text-red-700">
+                                                                <button onClick={() => handleDeleteProduct(task._id)} className="text-red-500 hover:text-red-600">
                                                                     <MdDelete size={20} />
                                                                 </button>
                                                             </div>

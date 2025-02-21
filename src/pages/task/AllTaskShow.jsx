@@ -13,6 +13,9 @@ const AllTaskShow = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [tasks, isLoading, error, refetch] = AllTask();
+    const categories = ["To-Do", "In Progress", "Done"];
+
+    
 
     const handleOpenModal = (task) => {
         setSelectedTask(task);
@@ -56,7 +59,7 @@ const AllTaskShow = () => {
     if (error) return <p className="text-center text-red-500">Error fetching tasks</p>;
 
     const handleDeleteProduct = (id) => {
-      
+
         Swal.fire({
             title: "Are you sure?",
             icon: "warning",
@@ -79,11 +82,9 @@ const AllTaskShow = () => {
         });
     };
 
-    const groupedTasks = tasks.reduce((acc, task) => {
-        if (!acc[task.category]) {
-            acc[task.category] = [];
-        }
-        acc[task.category].push(task);
+    // Ensure all categories exist even if they are empty
+    const groupedTasks = categories.reduce((acc, category) => {
+        acc[category] = tasks.filter((task) => task.category === category);
         return acc;
     }, {});
 
@@ -96,28 +97,23 @@ const AllTaskShow = () => {
 
         const sourceCategory = source.droppableId;
         const destCategory = destination.droppableId;
-        const sourceIndex = source.index;
-        const destIndex = destination.index;
-
-        if (sourceCategory === destCategory && sourceIndex === destIndex) {
-            return;
-        }
 
         const sourceTasks = [...groupedTasks[sourceCategory]];
-        const [removed] = sourceTasks.splice(sourceIndex, 1);
-        removed.category = destCategory;
+        const [removed] = sourceTasks.splice(source.index, 1);
 
         if (sourceCategory === destCategory) {
-            sourceTasks.splice(destIndex, 0, removed);
+            sourceTasks.splice(destination.index, 0, removed);
             groupedTasks[sourceCategory] = sourceTasks;
         } else {
+            removed.category = destCategory;
             const destTasks = [...groupedTasks[destCategory]];
-            destTasks.splice(destIndex, 0, removed);
+            destTasks.splice(destination.index, 0, removed);
             groupedTasks[sourceCategory] = sourceTasks;
             groupedTasks[destCategory] = destTasks;
         }
 
         const updatedTasks = Object.values(groupedTasks).flat();
+
         axiosPublic.put('/tasks/reorder', { tasks: updatedTasks })
             .then((response) => {
                 console.log("Reorder Response:", response.data);
@@ -134,7 +130,7 @@ const AllTaskShow = () => {
                 <h2 className="text-2xl font-bold mb-4 text-center">Task List</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {Object.keys(groupedTasks).map((category) => (
+                    {categories.map((category) => (
                         <Droppable droppableId={category} key={category}>
                             {(provided) => (
                                 <div
@@ -144,30 +140,34 @@ const AllTaskShow = () => {
                                 >
                                     <h3 className="text-xl font-bold mb-2">{category}</h3>
                                     <div className="grid grid-cols-1 gap-4">
-                                        {groupedTasks[category].map((task, index) => (
-                                            <Draggable key={task._id} draggableId={task._id} index={index}>
-                                                {(provided) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        className="p-4 border rounded-lg shadow-sm bg-white"
-                                                    >
-                                                        <h4 className="text-lg font-semibold">{task.title}</h4>
-                                                        <p className="text-gray-600">{task.description}</p>
-                                                        <p className="text-sm text-gray-500">Date: {task.date}</p>
-                                                        <div className="text-end">
-                                                            <button onClick={() => handleOpenModal(task)} className="text-blue-500 hover:text-blue-700 mr-2">
-                                                                <FiEdit size={20} />
-                                                            </button>
-                                                            <button onClick={() => handleDeleteProduct(task._id)} className="text-red-500 hover:text-red-700">
-                                                                <MdDelete size={20} />
-                                                            </button>
+                                        {groupedTasks[category].length > 0 ? (
+                                            groupedTasks[category].map((task, index) => (
+                                                <Draggable key={task._id} draggableId={task._id} index={index}>
+                                                    {(provided) => (
+                                                        <div
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className="p-4 border rounded-lg shadow-sm bg-white"
+                                                        >
+                                                            <h4 className="text-lg font-semibold">{task.title}</h4>
+                                                            <p className="text-gray-600">{task.description}</p>
+                                                            <p className="text-sm text-gray-500">Date: {task.date}</p>
+                                                            <div className="text-end">
+                                                                <button onClick={() => handleOpenModal(task)} className="text-blue-500 hover:text-blue-700 mr-2">
+                                                                    <FiEdit size={20} />
+                                                                </button>
+                                                                <button onClick={() => handleDeleteProduct(task._id)} className="text-red-500 hover:text-red-700">
+                                                                    <MdDelete size={20} />
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
+                                                    )}
+                                                </Draggable>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500 text-center mt-2">No tasks available</p>
+                                        )}
                                         {provided.placeholder}
                                     </div>
                                 </div>
@@ -176,6 +176,7 @@ const AllTaskShow = () => {
                     ))}
                 </div>
 
+                {/* Modal for updating tasks */}
                 {isModalOpen && selectedTask && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                         <form className="bg-white p-6 rounded-lg w-96" onSubmit={handleUpdateTask}>
@@ -219,4 +220,5 @@ const AllTaskShow = () => {
 };
 
 export default AllTaskShow;
+
 

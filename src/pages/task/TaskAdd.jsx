@@ -44,7 +44,7 @@ const TaskAdd = () => {
         <div className="w-11/12 mx-auto flex flex-col items-center mt-10">
             <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-blue-600 text-white py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105"
+                className="bg-blue-600 text-white py-3 px-6 rounded-full"
             >
                 Add Task
             </button>
